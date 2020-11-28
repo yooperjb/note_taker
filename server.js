@@ -31,7 +31,7 @@ app.get('/api/notes', (req, res) => {
 
 
 // this makes the server listen
-app.listen(3001, () => {
+app.listen(PORT, () => {
     console.log(`API server now on ${PORT}!`);
 });
 
