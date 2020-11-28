@@ -37,7 +37,23 @@ function createNewNote(body, notesArray) {
     // push new note to notes array
     notesArray.push(note);
 
+    fs.writeFileSync(
+        path.join(__dirname, './db/db.json'),
+        JSON.stringify(notesArray, null, 2)
+    );
+
     return note;
+};
+
+// validate POST data
+function validateNote(note) {
+    if (!note.title || typeof note.title !== 'string') {
+        return false;
+    }
+    if (!note.text || typeof note.text !== 'string') {
+        return false;
+    }
+    return true;
 };
 
 // route to data. First argument is string of route client has to fetch from. Second arg is callback that will execute everytime that route is accesses with GET request. 
@@ -55,7 +71,7 @@ app.get('/api/notes', (req, res) => {
     res.json(results);
 });
 
-// get route for parameter property - id
+// GET route for parameter property - id
 app.get('/api/notes/:id', (req, res) => {
     const result = findById(req.params.id, notes);
     if (result){
@@ -66,17 +82,21 @@ app.get('/api/notes/:id', (req, res) => {
 });
 
 
-// post route that accepts data stored server-side
+// POST route that accepts data stored server-side
 app.post('/api/notes', (req, res) => {
 
     // create a unique ID to add to each new note using Math.max and spread operator. req.body is the data that is received from POST
     req.body.id = (Math.max(...notes.map(note => note.id)) +1 ).toString();
     console.log(req.body);
 
-    // add note to json file
-    const note = createNewNote(req.body, notes);
-    
-    res.json(note);
+    // if any data in req.body is incorrect, send 400 error back
+    if (!validateNote(req.body)) {
+        res.status(400).send("The note is not properly formatted.");
+    } else {
+        // if validates add note to db.json file
+        const note = createNewNote(req.body, notes);
+        res.json(note);
+    }   
 });
 
 // this makes the server listen
