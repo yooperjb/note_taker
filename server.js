@@ -13,6 +13,9 @@ app.use(express.urlencoded({ extended: true }));
 // Takes incoming POST data in the form of JSON and parses into req.body JavaScript object
 app.use(express.json());
 
+// middleware to make files available
+app.use(express.static('public'));
+
 // not sure if this is needed or not
 function filterByQuery(query, notesArray) {
     let filteredResults = notesArray;
@@ -56,7 +59,7 @@ function validateNote(note) {
     return true;
 };
 
-// route to data. First argument is string of route client has to fetch from. Second arg is callback that will execute everytime that route is accesses with GET request. 
+// route to data. First argument is string of route client has to fetch from. Second arg is callback that will execute everytime that route is accesses with GET request.
 app.get('/api/notes', (req, res) => {
     
     let results = notes;
@@ -98,6 +101,22 @@ app.post('/api/notes', (req, res) => {
         res.json(note);
     }   
 });
+
+// GET route for main html page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
+// GET route for main html page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
+// GET route for notes html page
+app.get('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/notes.html'));
+});
+
 
 // this makes the server listen
 app.listen(PORT, () => {
