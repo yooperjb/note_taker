@@ -2,7 +2,7 @@ const fs = require('fs'); // we need this in order to write to the json file
 const path = require('path'); // used for working with file and directory paths
 const express = require('express');
 const PORT = process.env.PORT || 3001;
-const notes = require('./db/db'); //require data
+const notes = require('./db/db'); //require json data
 
 // instantiate the server
 const app = express();
@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 // Takes incoming POST data in the form of JSON and parses into req.body JavaScript object
 app.use(express.json());
 
-// middleware to make files available
+// middleware to make public files available
 app.use(express.static('public'));
 
 // not sure if this is needed or not
@@ -107,16 +107,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
-// GET route for main html page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/index.html'));
-});
-
 // GET route for notes html page
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, './public/notes.html'));
 });
-
 
 // this makes the server listen
 app.listen(PORT, () => {
